@@ -5,5 +5,9 @@ public interface ITransformer
     string Name { get; set; }
     int NumberOfWins { get; }
     int NumberOfLosses { get; }
-    string Faction {get; set;}    
+    int NumberOfDraws { get; }
+    Faction Faction {get;}
+    void RecordWin();
+    void RecordLoss();
+    void RecordDraw();
 }
