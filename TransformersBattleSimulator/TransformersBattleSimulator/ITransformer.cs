@@ -1,6 +1,6 @@
 ﻿namespace TransformersBattleSimulator;
 
-public interface ITransformer
+public interface ITransformer : IEntity
 {
     string Name { get; set; }
     int NumberOfWins { get; }

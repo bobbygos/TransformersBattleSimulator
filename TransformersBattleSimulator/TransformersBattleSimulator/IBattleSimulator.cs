@@ -3,5 +3,5 @@
 public interface IBattleSimulator
 {
     public IRepository Repository { get; }
-    IBattleResult Battle(ITransformer a, ITransformer b);
+    Task<IBattleResult> BattleAsync(ITransformer a, ITransformer b);
 }

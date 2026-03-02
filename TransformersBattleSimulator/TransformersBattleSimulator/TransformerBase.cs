@@ -2,6 +2,7 @@
 
 public abstract class TransformerBase(string name, Faction faction) : ITransformer
 {
+    public Guid Id { get; private set; } = Guid.NewGuid();
     public string Name { get; set; } = name;
 
     public int NumberOfWins { get; private set; }

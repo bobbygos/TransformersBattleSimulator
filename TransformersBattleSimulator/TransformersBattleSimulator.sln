@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransformersBattleSimulator", "TransformersBattleSimulator\TransformersBattleSimulator.csproj", "{09BF3439-59A0-4D31-AE60-A0A888E5DDFD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransformersBattleSimulator.Tests", "TransformersBattleSimulator.Tests\TransformersBattleSimulator.Tests.csproj", "{A8DA1D42-A9C6-4832-A7B2-A83E4C3722A3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{09BF3439-59A0-4D31-AE60-A0A888E5DDFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{09BF3439-59A0-4D31-AE60-A0A888E5DDFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{09BF3439-59A0-4D31-AE60-A0A888E5DDFD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A8DA1D42-A9C6-4832-A7B2-A83E4C3722A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A8DA1D42-A9C6-4832-A7B2-A83E4C3722A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A8DA1D42-A9C6-4832-A7B2-A83E4C3722A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A8DA1D42-A9C6-4832-A7B2-A83E4C3722A3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
