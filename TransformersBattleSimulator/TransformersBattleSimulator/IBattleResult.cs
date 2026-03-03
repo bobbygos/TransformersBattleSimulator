@@ -2,6 +2,6 @@
 
 public interface IBattleResult : IEntity
 {
-    ITransformer? Winner { get; }
-    List<ITransformer> Participants { get; }
+    string? Winner { get; }
+    List<string> Participants { get; }
 }

@@ -4,38 +4,23 @@ public class SimpleBattleResult : IBattleResult
 {
     public Guid Id { get; private set; } = Guid.NewGuid();
 
-    public Guid? WinnerId { get; private set; }
-    public TransformerBase? WinnerEntity { get; private set; }
-
-    public List<TransformerBase> ParticipantEntities { get; private set; } = [];
-
-    public ITransformer? Winner => WinnerEntity;
-    public List<ITransformer> Participants => ParticipantEntities.Cast<ITransformer>().ToList();
+    public string? Winner { get; private set; }
+    public List<string> Participants { get; private set; } = [];
 
     private SimpleBattleResult()
     {
     }
 
-    public SimpleBattleResult(ITransformer winner, List<ITransformer> participants)
+    public SimpleBattleResult(string? winner, List<string> participants)
     {
-        if (winner is not TransformerBase winnerEntity)
+        ArgumentNullException.ThrowIfNull(participants);
+
+        if (participants.Count == 0)
         {
-            throw new ArgumentException("Winner must inherit from TransformerBase.", nameof(winner));
+            throw new ArgumentException("Participants cannot be empty.", nameof(participants));
         }
 
-        var participantEntities = new List<TransformerBase>(participants.Count);
-        foreach (var participant in participants)
-        {
-            if (participant is not TransformerBase entity)
-            {
-                throw new ArgumentException("All participants must inherit from TransformerBase.", nameof(participants));
-            }
-
-            participantEntities.Add(entity);
-        }
-
-        WinnerEntity = winnerEntity;
-        WinnerId = winnerEntity.Id;
-        ParticipantEntities = participantEntities;
+        Winner = string.IsNullOrWhiteSpace(winner) ? null : winner.Trim();
+        Participants = participants;
     }
 }

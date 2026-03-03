@@ -17,33 +17,21 @@ namespace TransformersBattleSimulator.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.0");
 
-            modelBuilder.Entity("SimpleBattleResultTransformerBase", b =>
-                {
-                    b.Property<Guid>("ParticipantEntitiesId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("SimpleBattleResultId")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("ParticipantEntitiesId", "SimpleBattleResultId");
-
-                    b.HasIndex("SimpleBattleResultId");
-
-                    b.ToTable("BattleResultParticipants", (string)null);
-                });
-
             modelBuilder.Entity("TransformersBattleSimulator.SimpleBattleResult", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid?>("WinnerId")
+                    b.Property<string>("Participants")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Winner")
+                        .HasMaxLength(200)
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("WinnerId");
 
                     b.ToTable("BattleResults");
                 });
@@ -93,31 +81,6 @@ namespace TransformersBattleSimulator.Migrations
                     b.HasBaseType("TransformersBattleSimulator.TransformerBase");
 
                     b.HasDiscriminator().HasValue("DecepticonTransformer");
-                });
-
-            modelBuilder.Entity("SimpleBattleResultTransformerBase", b =>
-                {
-                    b.HasOne("TransformersBattleSimulator.TransformerBase", null)
-                        .WithMany()
-                        .HasForeignKey("ParticipantEntitiesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("TransformersBattleSimulator.SimpleBattleResult", null)
-                        .WithMany()
-                        .HasForeignKey("SimpleBattleResultId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("TransformersBattleSimulator.SimpleBattleResult", b =>
-                {
-                    b.HasOne("TransformersBattleSimulator.TransformerBase", "WinnerEntity")
-                        .WithMany()
-                        .HasForeignKey("WinnerId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.Navigation("WinnerEntity");
                 });
 #pragma warning restore 612, 618
         }

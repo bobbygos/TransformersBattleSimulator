@@ -11,11 +11,6 @@ public class DatabaseRepository(BattleSimulatorDbContext dbContext) : IRepositor
         return entity;
     }
 
-    public Task<T?> GetByIdAsync<T>(Guid id, CancellationToken ct = default) where T : class, IEntity
-    {
-        return dbContext.Set<T>().FirstOrDefaultAsync(entity => entity.Id == id, ct);
-    }
-
     public Task<List<T>> ListAsync<T>(CancellationToken ct = default) where T : class, IEntity
     {
         return dbContext.Set<T>().ToListAsync(ct);

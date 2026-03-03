@@ -26,15 +26,18 @@ public class ConsoleApp(
                         await RemoveTransformerAsync();
                         break;
                     case "3":
-                        await ListTransformersAsync();
+                        await ShowTransformerWinLossAsync();
                         break;
                     case "4":
-                        await RunBattleAsync();
+                        await ListTransformersAsync();
                         break;
                     case "5":
-                        await ListBattleResultsAsync();
+                        await RunBattleAsync();
                         break;
                     case "6":
+                        await ListBattleResultsAsync();
+                        break;
+                    case "7":
                         running = false;
                         break;
                     default:
@@ -56,10 +59,11 @@ public class ConsoleApp(
         Console.WriteLine("Transformers Battle Simulator");
         Console.WriteLine("1. Add transformer");
         Console.WriteLine("2. Remove transformer");
-        Console.WriteLine("3. List transformers");
-        Console.WriteLine("4. Run battle");
-        Console.WriteLine("5. Show battle results");
-        Console.WriteLine("6. Exit");
+        Console.WriteLine("3. Show Transformer's Win/Loss rate");
+        Console.WriteLine("4. List transformers");
+        Console.WriteLine("5. Run battle");
+        Console.WriteLine("6. Show battle results");
+        Console.WriteLine("7. Exit");
         Console.Write("Choose an option: ");
     }
 
@@ -93,7 +97,7 @@ public class ConsoleApp(
         await repository.AddAsync<TransformerBase>(transformer);
         Console.WriteLine($"Added {transformer.Name} ({transformer.Faction})");
     }
-    
+
     private async Task RemoveTransformerAsync()
     {
         var transformers = await repository.ListAsync<TransformerBase>();
@@ -104,11 +108,10 @@ public class ConsoleApp(
             var transformer = transformers[i];
             Console.WriteLine($"{i + 1}. {transformer.Name} ({transformer.Faction})");
         }
+
         var indexRemove = ReadSelection("Select transformer number to remove: ", transformers.Count);
-
-        await repository.DeleteAsync<TransformerBase>(transformers[indexRemove]);
+        await repository.DeleteAsync(transformers[indexRemove]);
     }
-
 
     private async Task ListTransformersAsync()
     {
@@ -119,12 +122,13 @@ public class ConsoleApp(
             return;
         }
 
-        Console.WriteLine("Transformer ID | Transformer Name | Transformer Faction | Wins Losses Draws");
+        Console.WriteLine("Transformer Name | Transformer Faction | Wins Losses Draws");
 
         foreach (var transformer in transformers.OrderBy(t => t.Name))
         {
             Console.WriteLine(
-                $"{transformer.Id} | {transformer.Name} | {transformer.Faction} | W:{transformer.NumberOfWins} L:{transformer.NumberOfLosses} D:{transformer.NumberOfDraws}");
+                $"{transformer.Name} | {transformer.Faction} | W:{transformer.NumberOfWins} " +
+                $"L:{transformer.NumberOfLosses} D:{transformer.NumberOfDraws}");
         }
     }
 
@@ -157,16 +161,14 @@ public class ConsoleApp(
         var b = transformers[secondIndex];
         var result = await battleSimulator.BattleAsync(a, b);
 
-        Console.WriteLine($"Winner: {result.Winner?.Name ?? "Draw"}");
-        var names = string.Join(", ", result.Participants.Select(p=> p.Name));
+        Console.WriteLine($"Winner: {result.Winner ?? "Draw"}");
+        var names = string.Join(", ", result.Participants);
         Console.WriteLine($"Participants: {names}");
     }
 
     private async Task ListBattleResultsAsync()
     {
         var results = await dbContext.BattleResults
-            .Include(r => r.WinnerEntity)
-            .Include(r => r.ParticipantEntities)
             .OrderByDescending(r => r.Id)
             .ToListAsync();
 
@@ -178,9 +180,27 @@ public class ConsoleApp(
 
         foreach (var result in results)
         {
-            var participants = string.Join(", ", result.ParticipantEntities.Select(p => p.Name));
-            Console.WriteLine($"{result.Id} | Winner: {result.WinnerEntity?.Name ?? "None"} | Participants: {participants}");
+            var participants = string.Join(", ", result.Participants);
+            Console.WriteLine($"Winner: {result.Winner ?? "Draw"} | Participants: {participants}");
         }
+    }
+    
+    private async Task ShowTransformerWinLossAsync()
+    {
+        var transformers = await repository.ListAsync<TransformerBase>();
+
+        Console.WriteLine("Available transformers:");
+        for (var i = 0; i < transformers.Count; i++)
+        {
+            var transformer = transformers[i];
+            Console.WriteLine($"{i + 1}. {transformer.Name} ({transformer.Faction})");
+        }
+
+        var indexShow = ReadSelection("Select transformer number to show wins/losses: ", transformers.Count);
+        var transformerShow = transformers[indexShow];
+        var winLossRate = (double)transformerShow.NumberOfWins/(double)transformerShow.NumberOfLosses;
+        Console.WriteLine($"{transformerShow.Name} | {transformerShow.Faction} | Win/loss rate: {winLossRate:F2}");
+        
     }
 
     private static int ReadSelection(string prompt, int max)

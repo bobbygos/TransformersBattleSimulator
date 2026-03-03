@@ -1,4 +1,7 @@
+using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace TransformersBattleSimulator;
 
@@ -21,17 +24,23 @@ public class BattleSimulatorDbContext(DbContextOptions<BattleSimulatorDbContext>
         modelBuilder.Entity<SimpleBattleResult>(entity =>
         {
             entity.HasKey(br => br.Id);
-            entity.Ignore(br => br.Winner);
-            entity.Ignore(br => br.Participants);
+            entity.Property(br => br.Winner)
+                .HasMaxLength(200);
+            
+            var converter = new ValueConverter<List<string>, string>(
+                v => JsonSerializer.Serialize(v, (JsonSerializerOptions?)null),
+                v => string.IsNullOrWhiteSpace(v)
+                    ? new List<string> { }
+                    : JsonSerializer.Deserialize<List<string>>(v) ?? new List<string> { });
 
-            entity.HasOne(br => br.WinnerEntity)
-                .WithMany()
-                .HasForeignKey(br => br.WinnerId)
-                .OnDelete(DeleteBehavior.SetNull);
+            var comparer = new ValueComparer<List<string>>(
+                (a, b) => (a ?? new List<string> { }).SequenceEqual(b ?? new List<string> { }),
+                v => (v).Aggregate(0, (h, s) => HashCode.Combine(h, s.GetHashCode())),
+                v => (v).ToList());
 
-            entity.HasMany(br => br.ParticipantEntities)
-                .WithMany()
-                .UsingEntity(j => j.ToTable("BattleResultParticipants"));
+            entity.Property(x => x.Participants)
+                .HasConversion(converter)
+                .Metadata.SetValueComparer(comparer);
         });
     }
 }

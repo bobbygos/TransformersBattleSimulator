@@ -20,7 +20,7 @@ public class SimpleBattleSimulator(IRepository repository) : IBattleSimulator
             }
         }
 
-        var result = new SimpleBattleResult(winner, participants);
+        var result = new SimpleBattleResult(winner.Name, participants.Select(p => p.Name).ToList());
         await Repository.AddAsync(result);
         return result;
     }
